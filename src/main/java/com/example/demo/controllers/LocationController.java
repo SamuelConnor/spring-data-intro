@@ -10,13 +10,13 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/location")
+@RequestMapping("/api")
 public class LocationController {
 
     @Autowired
     LocationService locationService;
 
-    @PostMapping(path = "/createLocation")
+    @PostMapping(path = "/location")
     public LocationEntity createLocation(@RequestBody LocationCreationDTO locationDTO)
     {
         //include validation possibly.
@@ -25,33 +25,29 @@ public class LocationController {
     }
 
     @ResponseBody
-    @GetMapping(path = "/findLocation")
-    public LocationEntity findById(@RequestParam("id") Long id)
+    @GetMapping(path = "/location/{id}")
+    public LocationEntity findById(@PathVariable Long id)
     {
     return locationService.findLocationById(id);
     }
 
     @ResponseBody
-    @GetMapping(path = "/allLocations")
-    public List<LocationEntity> allLocations()
+    @GetMapping(path = "/location")
+    public List<LocationEntity> allLocationsOrdered(@RequestParam (value = "page", defaultValue = "0") int page,
+                                                    @RequestParam (value = "size", defaultValue = "10") int size,
+                                                    @RequestParam (value = "criteria", defaultValue = "id") String criteria,
+                                                    @RequestParam (value = "ascending", defaultValue = "true") boolean ascending)
     {
-        return locationService.findAllLocations();
+        return locationService.findAllLocationsOrdered(page, size, criteria, ascending);
     }
 
-    @ResponseBody
-    @GetMapping(path = "/allLocationsOrdered")
-    public List<LocationEntity> allLocationsOrdered()
-    {
-        return locationService.findAllLocationsAscending();
-    }
-
-    @PutMapping(path = "/updateLocation/{id}")
+    @PutMapping(path = "/location/{id}")
     public ResponseEntity<LocationEntity> updateLocation(@RequestBody LocationEntity location, @PathVariable Long id)
     {
         return ResponseEntity.ok(locationService.updateLocation(location, id));
     }
 
-    @DeleteMapping(path = "/deleteLocation/{id}")
+    @DeleteMapping(path = "/location/{id}")
     public void deleteLocation(@PathVariable Long id)
     {
         locationService.deleteLocation(id);

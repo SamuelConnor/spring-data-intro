@@ -30,11 +30,18 @@ public class LocationService {
         return locationEntityRepository.findById(Id).orElse(null);
     }
 
-    public List<LocationEntity> findAllLocationsAscending()
+
+    public List<LocationEntity> findAllLocationsOrdered(int page, int size, String criteria, boolean ascending)
     {
-        Pageable pageable = PageRequest.of(0, 20, Sort.by("country").ascending());
+        Pageable pageable = PageRequest.of(page, size, Sort.by(criteria).ascending());
+        if(!ascending)
+        {
+            pageable = PageRequest.of(page, size, Sort.by(criteria).descending());
+        }
         return locationEntityRepository.findAll(pageable).getContent();
     }
+
+
 
     public LocationEntity updateLocation(LocationEntity newLocation, Long id)
     {
