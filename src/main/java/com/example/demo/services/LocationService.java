@@ -3,11 +3,7 @@ package com.example.demo.services;
 import com.example.demo.entities.LocationEntity;
 import com.example.demo.repositories.LocationEntityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
