@@ -4,6 +4,7 @@ import com.example.demo.entities.LocationEntity;
 import com.example.demo.model.dto.LocationCreationDTO;
 import com.example.demo.services.LocationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,7 +29,10 @@ public class LocationController {
     @GetMapping(path = "/location/{id}")
     public LocationEntity findById(@PathVariable Long id)
     {
-    return locationService.findLocationById(id);
+        LocationEntity location = locationService.findLocationById(id);
+        if(location == null)
+            throw new locationNotFoundException();
+        return location;
     }
 
     @ResponseBody
@@ -50,6 +54,12 @@ public class LocationController {
     @DeleteMapping(path = "/location/{id}")
     public void deleteLocation(@PathVariable Long id)
     {
+        if(locationService.findLocationById(id) == null)
+            throw new locationNotFoundException();
         locationService.deleteLocation(id);
     }
+
+    @ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "No location with that id")
+    public class locationNotFoundException extends RuntimeException {}
+
 }
