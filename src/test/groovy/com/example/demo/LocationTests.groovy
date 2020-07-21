@@ -2,10 +2,13 @@ package com.example.demo
 
 import com.example.demo.controllers.LocationController
 import com.example.demo.entities.LocationEntity
+import com.example.demo.exceptions.LocationNotFoundException
 import com.example.demo.repositories.LocationEntityRepository
+import com.example.demo.services.LocationService
 import groovy.json.JsonSlurper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.MockMvc
@@ -82,6 +85,15 @@ class LocationTests extends Specification {
         cleanup:
         deleteTestLocation(e1.id)
         deleteTestLocation(e2.id)
+    }
+
+    def "Location Not Found Test"()
+    {
+        when: "controller is called with an invalid id"
+            def result = mockMvc.perform(get("/api/location/{id}","-1")).andReturn()
+        then: "an exception is thrown by the controller"
+            result.response.status == HttpStatus.NOT_FOUND.value()
+            result.response.errorMessage == "No location with that id"
     }
 
     def "All locations"()

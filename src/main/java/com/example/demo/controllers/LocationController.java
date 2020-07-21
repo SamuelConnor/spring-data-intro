@@ -1,6 +1,7 @@
 package com.example.demo.controllers;
 
 import com.example.demo.entities.LocationEntity;
+import com.example.demo.exceptions.LocationNotFoundException;
 import com.example.demo.model.dto.LocationCreationDTO;
 import com.example.demo.services.LocationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +32,7 @@ public class LocationController {
     {
         LocationEntity location = locationService.findLocationById(id);
         if(location == null)
-            throw new locationNotFoundException();
+            throw new LocationNotFoundException();
         return location;
     }
 
@@ -55,11 +56,10 @@ public class LocationController {
     public void deleteLocation(@PathVariable Long id)
     {
         if(locationService.findLocationById(id) == null)
-            throw new locationNotFoundException();
+            throw new LocationNotFoundException();
         locationService.deleteLocation(id);
     }
 
-    @ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "No location with that id")
-    public class locationNotFoundException extends RuntimeException {}
+
 
 }
