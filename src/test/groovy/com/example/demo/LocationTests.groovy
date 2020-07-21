@@ -94,8 +94,9 @@ class LocationTests extends Specification {
             def result = mockMvc.perform(get("/api/location")).andReturn().response.contentAsString
             def json = new JsonSlurper().parseText(result)
         then: "Count the number of objects"
-            json.size() == locationEntityRepository.count()
-            json.size() == 3
+        json[0].id == e1.id
+        json[1].id == e2.id
+        json[2].id == e3.id
         cleanup:
         deleteTestLocation(e1.id)
         deleteTestLocation(e2.id)

@@ -28,7 +28,7 @@ public class LocationController {
     @GetMapping(path = "/location/{id}")
     public LocationEntity findById(@PathVariable Long id)
     {
-    return locationService.findLocationById(id);
+        return locationService.findLocationById(id);
     }
 
     @ResponseBody

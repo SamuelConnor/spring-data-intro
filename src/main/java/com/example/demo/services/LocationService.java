@@ -20,11 +20,6 @@ public class LocationService {
         return locationEntityRepository.save(location);
     }
 
-    public List<LocationEntity> findAllLocations()
-    {
-        return (List<LocationEntity>) locationEntityRepository.findAll();
-    }
-
     public LocationEntity findLocationById(Long Id)
     {
         return locationEntityRepository.findById(Id).orElse(null);
