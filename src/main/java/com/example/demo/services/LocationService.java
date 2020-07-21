@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,17 +28,10 @@ public class LocationService {
     }
 
 
-    public List<LocationEntity> findAllLocationsOrdered(int page, int size, String criteria, boolean ascending)
+    public List<LocationEntity> findAllLocationsOrdered(Pageable page)
     {
-        Pageable pageable = PageRequest.of(page, size, Sort.by(criteria).ascending());
-        if(!ascending)
-        {
-            pageable = PageRequest.of(page, size, Sort.by(criteria).descending());
-        }
-        return locationEntityRepository.findAll(pageable).getContent();
+        return locationEntityRepository.findAll(page).getContent();
     }
-
-
 
     public LocationEntity updateLocation(LocationEntity newLocation, Long id)
     {

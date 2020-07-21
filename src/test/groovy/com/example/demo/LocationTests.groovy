@@ -105,6 +105,8 @@ class LocationTests extends Specification {
 
 
 
+
+
     def "All locations ordered test"()
     {
         given: "three entities not in alphabetical order"
@@ -119,7 +121,7 @@ class LocationTests extends Specification {
                 locationEntityRepository.save(e3)
 
         when: "controller is called for alphabetical list"
-            def result = mockMvc.perform(get("/api/location?page=0&size=5&criteria=country&ascending=true")).andReturn().response.contentAsString
+            def result = mockMvc.perform(get("/api/location?sort=country")).andReturn().response.contentAsString
             def json = new JsonSlurper().parseText(result)
         then: "Check if objects are in the correct order"
             json[0].country == e2.country
