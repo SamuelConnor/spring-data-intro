@@ -5,9 +5,11 @@ import com.example.demo.exceptions.LocationNotFoundException;
 import com.example.demo.model.dto.LocationCreationDTO;
 import com.example.demo.services.LocationService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+
 
 import java.util.List;
 
@@ -21,7 +23,6 @@ public class LocationController {
     @PostMapping(path = "/location")
     public LocationEntity createLocation(@RequestBody LocationCreationDTO locationDTO)
     {
-        //include validation possibly.
         LocationEntity location = locationDTO.convertDtoToEntity();
         return locationService.createLocation(location);
     }
@@ -38,12 +39,9 @@ public class LocationController {
 
     @ResponseBody
     @GetMapping(path = "/location")
-    public List<LocationEntity> allLocationsOrdered(@RequestParam (value = "page", defaultValue = "0") int page,
-                                                    @RequestParam (value = "size", defaultValue = "10") int size,
-                                                    @RequestParam (value = "criteria", defaultValue = "id") String criteria,
-                                                    @RequestParam (value = "ascending", defaultValue = "true") boolean ascending)
+    public List<LocationEntity> allLocationsOrdered(Pageable page)
     {
-        return locationService.findAllLocationsOrdered(page, size, criteria, ascending);
+        return locationService.findAllLocationsOrdered(page);
     }
 
     @PutMapping(path = "/location/{id}")

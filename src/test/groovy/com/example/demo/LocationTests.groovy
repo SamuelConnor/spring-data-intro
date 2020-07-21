@@ -106,13 +106,16 @@ class LocationTests extends Specification {
             def result = mockMvc.perform(get("/api/location")).andReturn().response.contentAsString
             def json = new JsonSlurper().parseText(result)
         then: "Count the number of objects"
-            json.size() == locationEntityRepository.count()
-            json.size() == 3
+        json[0].id == e1.id
+        json[1].id == e2.id
+        json[2].id == e3.id
         cleanup:
         deleteTestLocation(e1.id)
         deleteTestLocation(e2.id)
         deleteTestLocation(e3.id)
     }
+
+
 
 
 
@@ -130,7 +133,7 @@ class LocationTests extends Specification {
                 locationEntityRepository.save(e3)
 
         when: "controller is called for alphabetical list"
-            def result = mockMvc.perform(get("/api/location?page=0&size=5&criteria=country&ascending=true")).andReturn().response.contentAsString
+            def result = mockMvc.perform(get("/api/location?sort=country")).andReturn().response.contentAsString
             def json = new JsonSlurper().parseText(result)
         then: "Check if objects are in the correct order"
             json[0].country == e2.country
