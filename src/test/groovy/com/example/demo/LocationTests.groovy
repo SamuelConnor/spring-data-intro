@@ -1,10 +1,10 @@
 package com.example.demo
 
 import com.example.demo.controllers.LocationController
+import com.example.demo.entities.CarEntity
 import com.example.demo.entities.LocationEntity
-import com.example.demo.exceptions.LocationNotFoundException
+import com.example.demo.repositories.CarEntityRepository
 import com.example.demo.repositories.LocationEntityRepository
-import com.example.demo.services.LocationService
 import groovy.json.JsonSlurper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -26,6 +26,7 @@ class LocationTests extends Specification {
 
     @Autowired LocationController locationController
     @Autowired LocationEntityRepository locationEntityRepository
+    @Autowired CarEntityRepository carEntityRepository
     @Autowired WebApplicationContext context
 
     def setup() {
@@ -75,16 +76,42 @@ class LocationTests extends Specification {
             def e2 = new LocationEntity()
                 e2.setCountry("Algeria")
                 locationEntityRepository.save(e2)
+            def car = new CarEntity()
+                car.location = e2
+                carEntityRepository.save(car)
+
         when: "controller is called with an id"
             def result = mockMvc.perform(get("/api/location/$e2.id")).andReturn().response.contentAsString
             def json = new JsonSlurper().parseText(result)
-        then: "result is an entity with an corresponding id"
+        then: "result is an entity with an corresponding id that contains a car entity"
             json.id == e2.id
             json.id > 0
             json.id != e1.id
+            json.car[0].id == car.id
         cleanup:
         deleteTestLocation(e1.id)
         deleteTestLocation(e2.id)
+    }
+
+    def "Location Find by ID No Cars test"()
+    {
+        given: "two entities"
+            def e1 = new LocationEntity()
+                e1.setCountry("Canada")
+                locationEntityRepository.save(e1)
+            def e2 = new LocationEntity()
+                e2.setCountry("Algeria")
+                locationEntityRepository.save(e2)
+        when: "controller is called with an id"
+            def result = mockMvc.perform(get("/api/location/findByIdShort/$e2.id")).andReturn().response.contentAsString
+            def json = new JsonSlurper().parseText(result)
+        then: "result is an entity with an corresponding id"
+                json.id == e2.id
+                json.id > 0
+                json.id != e1.id
+        cleanup:
+                deleteTestLocation(e1.id)
+                deleteTestLocation(e2.id)
     }
 
     def "Location Not Found Test"()
@@ -114,10 +141,6 @@ class LocationTests extends Specification {
         deleteTestLocation(e2.id)
         deleteTestLocation(e3.id)
     }
-
-
-
-
 
     def "All locations ordered test"()
     {
@@ -175,7 +198,7 @@ class LocationTests extends Specification {
             def e1 = locationEntityRepository.save(new LocationEntity())
             def e2 = locationEntityRepository.save(new LocationEntity())
         when: "controller is called with an id, delete entity"
-            def result = mockMvc.perform(delete("/api/location/{id}",e1.id).contentType(MediaType.APPLICATION_JSON)).andReturn().response.getContentAsString()
+            mockMvc.perform(delete("/api/location/{id}",e1.id).contentType(MediaType.APPLICATION_JSON))
         then: "check if the entity still exists"
             !locationEntityRepository.findById(e1.id)
             locationEntityRepository.findById(e2.id)
