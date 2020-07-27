@@ -53,7 +53,7 @@ public class CustomerController {
     public void deleteLocation(@PathVariable Long id)
     {
         if(customerService.findCustomerById(id) == null)
-            throw new LocationNotFoundException();
+            throw new CustomerNotFoundException();
         customerService.deleteCustomer(id);
     }
 
