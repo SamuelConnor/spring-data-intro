@@ -1,13 +1,12 @@
 package com.example.demo.repositories;
 
+import com.example.demo.entities.CarEntity;
 import com.example.demo.entities.LocationEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
-public interface LocationEntityRepository extends PagingAndSortingRepository<LocationEntity, Long>
+public interface CarEntityRepository extends PagingAndSortingRepository<CarEntity, Long>
 {
-    Page<LocationEntity> findAll(Pageable pageable);
-
-    Page<LocationEntity> findById(Long id,Pageable pageable);
+    Page<CarEntity> findAll(Pageable pageable);
 }
