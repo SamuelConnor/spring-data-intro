@@ -26,11 +26,9 @@ public class LocationEntity {
     @Setter
     private String country;
 
-
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "location", fetch = FetchType.LAZY)
     @Setter
     private Set<CarEntity> car;
-
 
     @JsonIgnore
     public Set<CarEntity> getCarsInLocation(){
