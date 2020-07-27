@@ -35,14 +35,22 @@ public class BookingController {
         return bookingService.findAllBookingsOrdered(page);
     }
 
+    @ResponseBody
+    @GetMapping(path = "/booking/today")
+    public List<BookingEntity> allBookingsToday(Pageable page)
+    {
+        return bookingService.findAllBookingsToday(page);
+    }
+
+
     @PutMapping(path = "/booking/{id}")
-    public ResponseEntity<BookingEntity> updateLocation(@RequestBody BookingEntity booking, @PathVariable Long id)
+    public ResponseEntity<BookingEntity> updateBooking(@RequestBody BookingEntity booking, @PathVariable Long id)
     {
         return ResponseEntity.ok(bookingService.updateBooking(booking, id));
     }
 
     @DeleteMapping(path = "/booking/{id}")
-    public void deleteLocation(@PathVariable Long id)
+    public void deleteBooking(@PathVariable Long id)
     {
         bookingService.deleteBooking(id);
     }

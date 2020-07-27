@@ -120,7 +120,7 @@ class BookingTests extends Specification {
             deleteTestCustomer(cus.id)
     }
 
-    def "Location Not Found Test"()
+    def "Booking Not Found Test"()
     {
         when: "controller is called with an invalid id"
             def result = mockMvc.perform(get("/api/booking/{id}","-1")).andReturn()
@@ -129,7 +129,7 @@ class BookingTests extends Specification {
                 result.response.errorMessage == "No booking with that id"
     }
 
-    def "All locations"()
+    def "All Bookings"()
     {
         given: "three entities"
             def loc = locationEntityRepository.save(new LocationEntity())
@@ -154,6 +154,45 @@ class BookingTests extends Specification {
             def json = new JsonSlurper().parseText(result)
         then: "Count the number of objects"
                 json*.id as Set == [e1.id, e2.id, e3.id] as Set
+        cleanup:
+            deleteTestBooking(e1.id)
+            deleteTestBooking(e2.id)
+            deleteTestBooking(e3.id)
+            deleteTestCar(car.id)
+            deleteTestLocation(loc.id)
+            deleteTestCustomer(cus.id)
+    }
+
+    def "All Bookings Today"()
+    {
+        given: "three entities - 2 with todays end-date, 1 without"
+            def loc = locationEntityRepository.save(new LocationEntity())
+            def date = new Date()
+            def oldDate = new Date(2019,03,01)
+            def car = new CarEntity()
+                car.setLocation(loc)
+                carEntityRepository.save(car)
+            def cus = customerEntityRepository.save(new CustomerEntity())
+            def e1 = new BookingEntity()
+                e1.setCustomer(cus)
+                e1.setCar(car)
+                e1.setEndDate(date)
+                bookingEntityRepository.save(e1)
+            def e2 = new BookingEntity()
+                e2.setCustomer(cus)
+                e2.setCar(car)
+                e2.setEndDate(date)
+                bookingEntityRepository.save(e2)
+            def e3 = new BookingEntity()
+                e3.setCustomer(cus)
+                e3.setCar(car)
+                e3.setEndDate(oldDate)
+                bookingEntityRepository.save(e3)
+        when: "controller is called for complete list"
+        def result = mockMvc.perform(get("/api/booking/today")).andReturn().response.contentAsString
+        def json = new JsonSlurper().parseText(result)
+        then: "Count the number of objects"
+        json*.id as Set == [e1.id, e2.id] as Set
         cleanup:
             deleteTestBooking(e1.id)
             deleteTestBooking(e2.id)
