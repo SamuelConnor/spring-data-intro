@@ -26,17 +26,15 @@ public class LocationService {
     EntityManager em;
     ModelMapper modelMapper = new ModelMapper();
 
-    public LocationEntity createLocation(LocationEntity location)
-    {
+    public LocationEntity createLocation(LocationEntity location) {
         return locationEntityRepository.save(location);
     }
 
     public LocationDto findLocationById(Long id)
     {
-        if(!locationEntityRepository.findById(id).isPresent())
-            throw new LocationNotFoundException();
-        LocationDto locationDto = modelMapper.map(locationEntityRepository.findById(id).get(),LocationDto.class);
-        locationDto.setCar(locationEntityRepository.findById(id).get().getCarsInLocation());
+        LocationEntity location = locationEntityRepository.findById(id).orElseThrow(LocationNotFoundException::new);
+        LocationDto locationDto = modelMapper.map(location,LocationDto.class);
+        locationDto.setCar(location.getCarsInLocation());
         return locationDto;
     }
 
@@ -50,7 +48,7 @@ public class LocationService {
 
     public LocationEntity findLocationByIdShort(Long id)
     {
-        if(!locationEntityRepository.findById(id).isPresent())
+        if(!locationEntityRepository.existsById(id))
             throw new LocationNotFoundException();
          EntityGraph graph = em.getEntityGraph("location-entity-graph");
          Map<String, Object> properties = new HashMap<>();
@@ -63,14 +61,14 @@ public class LocationService {
 
     public LocationEntity updateLocation(LocationEntity newLocation, Long id)
     {
-       LocationEntity location = locationEntityRepository.findById(id).get();
+       LocationEntity location = locationEntityRepository.findById(id).orElseThrow(LocationNotFoundException::new);
        location.setCountry(newLocation.getCountry());
        return locationEntityRepository.save(location);
     }
 
     public void deleteLocation(Long id)
     {
-        if(!locationEntityRepository.findById(id).isPresent())
+        if(!locationEntityRepository.existsById(id))
             throw new LocationNotFoundException();
         locationEntityRepository.deleteById(id);
     }
