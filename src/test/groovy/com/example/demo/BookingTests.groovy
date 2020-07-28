@@ -202,7 +202,7 @@ class BookingTests extends Specification {
             deleteTestCustomer(cus.id)
     }
 
-    def "Update a location"()
+    def "Update a Booking"()
     {
         given: "an entity"
             def loc = locationEntityRepository.save(new LocationEntity())
@@ -230,7 +230,7 @@ class BookingTests extends Specification {
     }
 
 
-    def "Delete a location"()
+    def "Delete a Booking"()
     {
         given: "two entities"
             def loc = locationEntityRepository.save(new LocationEntity())
@@ -256,6 +256,24 @@ class BookingTests extends Specification {
             deleteTestCar(car.id)
             deleteTestLocation(loc.id)
             deleteTestCustomer(cus.id)
+    }
+
+    def "Delete a booking that doesn't exist"()
+    {
+        when: "controller is called with an id that doesnt exist, delete entity"
+            def result = mockMvc.perform(delete("/api/booking/{id}","-1")).andReturn()
+        then: "an exception is thrown by the controller"
+                result.response.status == HttpStatus.NOT_FOUND.value()
+                result.response.errorMessage == "No booking with that id"
+    }
+
+    def "Updating a booking that doesn't exist"()
+    {
+        when: "controller is called with an id that doesnt exist, update entity"
+            def result = mockMvc.perform(put("/api/booking/{id}","-1")).andReturn()
+        then: "an exception is thrown by the controller"
+                result.response.status == HttpStatus.NOT_FOUND.value()
+                result.response.errorMessage == "No booking with that id"
     }
 
     def "deleteTestBooking"(def id)
