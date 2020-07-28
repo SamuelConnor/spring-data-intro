@@ -25,11 +25,7 @@ public class BookingService {
     }
 
     public BookingEntity findBookingById(Long id) {
-
-        if(!bookingEntityRepository.existsById(id)) {
-            { throw new BookingNotFoundException(); }
-        }
-        return bookingEntityRepository.findById(id).get();
+        return bookingEntityRepository.findById(id).orElseThrow(BookingNotFoundException::new);
     }
 
 
@@ -45,9 +41,7 @@ public class BookingService {
     }
 
     public void deleteBooking(Long id) {
-        BookingEntity booking = bookingEntityRepository.findById(id).get();
-        if(booking == null)
-            throw new BookingNotFoundException();
+        BookingEntity booking = bookingEntityRepository.findById(id).orElseThrow(BookingNotFoundException::new);
         CustomerEntity customer = booking.customer;
         Set<BookingEntity> bookingSet = customer.getBookingsByCustomer();
         bookingSet.remove(booking);

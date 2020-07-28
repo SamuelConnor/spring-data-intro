@@ -61,9 +61,6 @@ class BookingTests extends Specification {
                 !resultList.isEmpty()
         and: "including our earlier id"
                 result.id in resultList*.id
-        for (i in result) {
-            println("-----------------------------------------\nTesting\n" + i.id)
-        }
         cleanup:
             deleteTestBooking(e1.id)
             deleteTestCar(car.id)
