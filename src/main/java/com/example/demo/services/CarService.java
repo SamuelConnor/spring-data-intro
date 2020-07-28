@@ -67,9 +67,7 @@ public class CarService
 
     public void deleteCar(Long id)
     {
-        CarEntity car = carEntityRepository.findById(id).get();
-        if(car == null)
-            throw new CarNotFoundException();
+        CarEntity car = carEntityRepository.findById(id).orElseThrow(CarNotFoundException::new);
         LocationEntity location = car.getLocation();
         Set<CarEntity> carList = location.getCarsInLocation();
         carList.remove(car);
