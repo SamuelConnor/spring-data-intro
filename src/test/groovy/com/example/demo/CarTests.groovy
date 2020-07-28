@@ -125,9 +125,7 @@ class CarTests extends Specification {
             def result = mockMvc.perform(get("/api/car/findByLocation/$loc1.country")).andReturn().response.contentAsString
             def json = new JsonSlurper().parseText(result)
         then: "result is a set of entities from that country"
-            json[0].id == e1.id
-            json[1].id != e2.id
-            json[1].id == e3.id
+        json*.id as Set == [e1.id, e3.id] as Set
         cleanup:
             deleteTestCar(e1.id)
             deleteTestCar(e2.id)
@@ -162,9 +160,7 @@ class CarTests extends Specification {
             def result = mockMvc.perform(get("/api/car")).andReturn().response.contentAsString
             def json = new JsonSlurper().parseText(result)
         then: "Count the number of objects"
-        json[0].id == e1.id
-        json[1].id == e2.id
-        json[2].id == e3.id
+            json*.id as Set == [e1.id, e2.id, e3.id] as Set
         cleanup:
             deleteTestCar(e1.id)
             deleteTestCar(e2.id)
